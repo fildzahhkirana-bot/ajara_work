@@ -1,0 +1,11 @@
+@extends('layouts.app')
+@section('title','Notifikasi')
+@section('content')
+<div class="mx-auto min-h-screen max-w-3xl px-5 pb-28 pt-7"><h1 class="text-2xl font-bold">Notifikasi</h1><p class="mt-1 text-sm text-slate-500">Update terbaru seputar peluang prestasimu.</p>
+<div class="mt-6 flex gap-2"><button data-filter="all" class="filter-btn rounded-full bg-ajara-700 px-4 py-2 text-xs font-semibold text-white">Semua</button><button data-filter="unread" class="filter-btn rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">Belum Dibaca</button></div>
+<div class="mt-5 space-y-3">@forelse($notifications as $notification)<article data-read="{{ $notification->read_at ? 'yes':'no' }}" class="rounded-2xl bg-white p-4 soft-shadow"><div class="flex gap-3"><span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ajara-50 text-ajara-700"><i class="bi bi-bell"></i></span><div class="min-w-0 flex-1"><div class="flex items-start justify-between gap-2"><h2 class="text-sm font-bold">{{ $notification->title }}</h2>@if(!$notification->read_at)<span class="h-2 w-2 shrink-0 rounded-full bg-ajara-600"></span>@endif</div><p class="mt-1 text-sm leading-6 text-slate-500">{{ $notification->message }}</p><div class="mt-3 flex items-center justify-between"><span class="text-[11px] text-slate-400">{{ $notification->created_at->diffForHumans() }}</span>@if(!$notification->read_at)<form method="POST" action="{{ route('notifications.read',$notification) }}">@csrf<button class="text-xs font-semibold text-ajara-700">Tandai dibaca</button></form>@endif</div></div></div></article>@empty<div class="rounded-2xl bg-white p-8 text-center text-sm text-slate-500">Belum ada notifikasi.</div>@endforelse</div></div>
+@include('partials.bottom-nav')
+@push('scripts')<script>
+document.querySelectorAll('.filter-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.filter-btn').forEach(b=>b.className='filter-btn rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-600 ring-1 ring-slate-200');btn.className='filter-btn rounded-full bg-ajara-700 px-4 py-2 text-xs font-semibold text-white';document.querySelectorAll('[data-read]').forEach(card=>card.classList.toggle('hidden',btn.dataset.filter==='unread'&&card.dataset.read==='yes'));}));
+</script>@endpush
+@endsection
